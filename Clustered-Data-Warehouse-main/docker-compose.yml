@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  spring:
+    container_name: fx-deals
+    build: .
+    networks:
+      - datalink
+    depends_on:
+      - pgdb
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.datasource.url=jdbc:postgresql://pgdb:5432/postgres
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.jpa.hibernate.ddl-auto=update
+
+  pgdb:
+    container_name: pgdb
+    image: postgres
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - datalink
+
+networks:
+  datalink:
+    driver: bridge
+
+volumes:
+  pgdata:
